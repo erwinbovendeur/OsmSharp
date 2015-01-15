@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using MonoTouch.UIKit;
+using UIKit;
 using OsmSharp.Logging;
 
 namespace OsmSharp.iOS.UI.Log
@@ -50,7 +50,7 @@ namespace OsmSharp.iOS.UI.Log
             {
                 _textView.Text = _textView.Text + message;
                 _textView.ScrollRangeToVisible(
-                    new MonoTouch.Foundation.NSRange(_textView.Text.Length, 0));
+                    new Foundation.NSRange(_textView.Text.Length, 0));
             });
         }
 
@@ -64,7 +64,7 @@ namespace OsmSharp.iOS.UI.Log
             {
                 _textView.Text = _textView.Text + message + System.Environment.NewLine;
                 _textView.ScrollRangeToVisible(
-                    new MonoTouch.Foundation.NSRange(_textView.Text.Length, 0));
+                    new Foundation.NSRange(_textView.Text.Length, 0));
             });
         }
     }

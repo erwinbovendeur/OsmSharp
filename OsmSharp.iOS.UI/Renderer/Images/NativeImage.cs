@@ -1,4 +1,4 @@
-﻿// OsmSharp - OpenStreetMap (OSM) SDK
+// OsmSharp - OpenStreetMap (OSM) SDK
 // Copyright (C) 2013 Abelshausen Ben
 // 
 // This file is part of OsmSharp.
@@ -17,9 +17,9 @@
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 using OsmSharp.UI.Renderer.Primitives;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace OsmSharp.iOS.UI
 {

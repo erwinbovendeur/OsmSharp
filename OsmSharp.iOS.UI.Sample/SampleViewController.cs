@@ -18,10 +18,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using CoreGraphics;
 using System.Reflection;
 using System.Timers;
-using MonoTouch.UIKit;
+using UIKit;
 using OsmSharp.Collections.Tags;
 using OsmSharp.Logging;
 using OsmSharp.Math.Geo;

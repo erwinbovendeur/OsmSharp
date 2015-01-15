@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.CoreGraphics;
-using System.Drawing;
+using CoreGraphics;
+using CoreGraphics;
 
 namespace OsmSharp.iOS.UI
 {
@@ -17,14 +17,14 @@ namespace OsmSharp.iOS.UI
 		/// <summary>
 		/// Holds the size of the CG context.
 		/// </summary>
-		private RectangleF _rectangle;
+		private CGRect _rectangle;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OsmSharp.iOS.UI.CGContextWrapper"/> class.
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="rectangle">Rectangle.</param>
-		public CGContextWrapper (CGContext context, RectangleF rectangle)
+		public CGContextWrapper (CGContext context, CGRect rectangle)
 		{
 			_rectangle = rectangle;
 			_context = context;
@@ -44,7 +44,7 @@ namespace OsmSharp.iOS.UI
 		/// Gets the width.
 		/// </summary>
 		/// <value>The width.</value>
-		public float Width {
+		public nfloat Width {
 			get{
 				return _rectangle.Width;
 			}
@@ -54,7 +54,7 @@ namespace OsmSharp.iOS.UI
 		/// Gets the height.
 		/// </summary>
 		/// <value>The height.</value>
-		public float Height {
+		public nfloat Height {
 			get{
 				return _rectangle.Height;
 			}

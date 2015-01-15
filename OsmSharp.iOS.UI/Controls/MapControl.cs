@@ -1,4 +1,4 @@
-﻿// OsmSharp - OpenStreetMap (OSM) SDK
+// OsmSharp - OpenStreetMap (OSM) SDK
 // Copyright (C) 2013 Abelshausen Ben
 // 
 // This file is part of OsmSharp.
@@ -17,7 +17,7 @@
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using OsmSharp.UI.Renderer;
 using OsmSharp.Math.Geo.Projections;
 using OsmSharp.Math.Geo;
@@ -67,7 +67,7 @@ namespace OsmSharp.iOS.UI.Controls
         /// Returns the left margin.
         /// </summary>
         /// <value>The left.</value>
-        public abstract System.Drawing.PointF Center { get; set; }
+        public abstract CoreGraphics.CGPoint Center { get; set; }
 
         /// <summary>
         /// Attaches this control to the given control host.
@@ -164,7 +164,7 @@ namespace OsmSharp.iOS.UI.Controls
             _alignment = alignment;
             this.MoveWithMap = true;
 
-            _view.Frame = new System.Drawing.RectangleF (new System.Drawing.PointF (0, 0), new System.Drawing.SizeF(width, height));
+            _view.Frame = new CoreGraphics.CGRect (new CoreGraphics.CGPoint (0, 0), new CoreGraphics.CGSize(width, height));
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace OsmSharp.iOS.UI.Controls
         /// <param name="alignment">The alignment.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
-        public MapControl(TView view, System.Drawing.PointF location, MapControlAlignmentType alignment, int width, int height)
+        public MapControl(TView view, CoreGraphics.CGPoint location, MapControlAlignmentType alignment, int width, int height)
         {
             _view = view;
             _location = null;
@@ -184,16 +184,16 @@ namespace OsmSharp.iOS.UI.Controls
 
             switch(alignment) {
                 case MapControlAlignmentType.Center:
-                    _view.Frame = new System.Drawing.RectangleF(
-                        new System.Drawing.PointF(location.X - width / 2.0f, location.Y - height / 2.0f), new System.Drawing.SizeF(width, height));
+                    _view.Frame = new CoreGraphics.CGRect(
+                        new CoreGraphics.CGPoint(location.X - width / 2.0f, location.Y - height / 2.0f), new CoreGraphics.CGSize(width, height));
                     break;
                 case MapControlAlignmentType.CenterBottom:
-                    _view.Frame = new System.Drawing.RectangleF(
-                        new System.Drawing.PointF(location.X - width / 2.0f, location.Y - height), new System.Drawing.SizeF(width, height));
+                    _view.Frame = new CoreGraphics.CGRect(
+                        new CoreGraphics.CGPoint(location.X - width / 2.0f, location.Y - height), new CoreGraphics.CGSize(width, height));
                     break;
                 case MapControlAlignmentType.CenterTop:
-                    _view.Frame = new System.Drawing.RectangleF(
-                        new System.Drawing.PointF(location.X - width / 2.0f, location.Y), new System.Drawing.SizeF(width, height));
+                    _view.Frame = new CoreGraphics.CGRect(
+                        new CoreGraphics.CGPoint(location.X - width / 2.0f, location.Y), new CoreGraphics.CGSize(width, height));
                     break;
             }
         }
@@ -245,7 +245,7 @@ namespace OsmSharp.iOS.UI.Controls
         /// Returns the left margin.
         /// </summary>
         /// <value>The left.</value>
-        public override System.Drawing.PointF Center
+        public override CoreGraphics.CGPoint Center
         {
             get
             {
@@ -335,7 +335,7 @@ namespace OsmSharp.iOS.UI.Controls
                         topMargin = locationPixel[1] - this.View.Frame.Height / 2.0;
                         break;
                 }
-                this.View.Center = new System.Drawing.PointF((float)leftMargin, (float)topMargin);
+                this.View.Center = new CoreGraphics.CGPoint((float)leftMargin, (float)topMargin);
             }
             else
             { // do not move with map but change the location.

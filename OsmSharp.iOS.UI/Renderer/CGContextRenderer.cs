@@ -17,18 +17,18 @@
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Linq;
-using MonoTouch.CoreText;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreText;
+using Foundation;
+using UIKit;
 using OsmSharp.Math;
 using OsmSharp.Math.Primitives;
 using OsmSharp.UI;
 using OsmSharp.UI.Renderer;
 using OsmSharp.Units.Angle;
 using OsmSharp.UI.Renderer.Primitives;
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 
 namespace OsmSharp.iOS.UI
 {
@@ -44,7 +44,7 @@ namespace OsmSharp.iOS.UI
 		/// <summary>
 		/// Holds the scale factor to enable higher resolution renderings.
 		/// </summary>
-		private float _scaleFactor;
+		private nfloat _scaleFactor;
 		/// <summary>
 		/// Holds the latest font to prevent creating it over and over.
 		/// </summary>
@@ -67,7 +67,7 @@ namespace OsmSharp.iOS.UI
 		/// Initializes a new instance of the <see cref="OsmSharp.iOS.UI.CGContextRenderer"/> class.
 		/// </summary>
 		/// <param name="scaleFactor">Scale factor.</param>
-		public CGContextRenderer(float scaleFactor)
+		public CGContextRenderer(nfloat scaleFactor)
 		{
 			_scaleFactor = scaleFactor;
 		}
@@ -90,7 +90,7 @@ namespace OsmSharp.iOS.UI
         /// <summary>
         /// Holds a utility rectangle to be reused.
         /// </summary>
-        private RectangleF _rectangle = new RectangleF();
+        private CGRect _rectangle = new CGRect();
 
 		/// <summary>
 		/// Transforms the target using the specified view.
@@ -112,7 +112,7 @@ namespace OsmSharp.iOS.UI
 		/// <returns></returns>
 		public override Target2DWrapper<CGContextWrapper> CreateTarget2DWrapper(CGContextWrapper target)
 		{
-			return new Target2DWrapper<CGContextWrapper>(target, target.Width, target.Height);
+			return new Target2DWrapper<CGContextWrapper>(target, (float) target.Width, (float) target.Height);
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace OsmSharp.iOS.UI
 		/// </summary>
 		/// <returns>The font.</returns>
 		/// <param name="fontName">Font name.</param>
-		private CTFont GetFont(string fontName, float textSize)
+		private CTFont GetFont(string fontName, nfloat textSize)
 		{
 			if (string.IsNullOrWhiteSpace(fontName))
 			{
@@ -244,17 +244,17 @@ namespace OsmSharp.iOS.UI
 		protected override void DrawLine(Target2DWrapper<CGContextWrapper> target, double[] x, double[] y, int color, double width, 
 		                                  LineJoin lineJoin, int[] dashes)
 		{
-			float widthInPixels = this.ToPixels(width) * _scaleFactor;
+			nfloat widthInPixels = this.ToPixels(width) * _scaleFactor;
 
 			SimpleColor simpleColor = SimpleColor.FromArgb(color);
 			target.Target.CGContext.SetLineJoin(CGLineJoin.Round);
 			target.Target.CGContext.SetLineWidth(widthInPixels);
 			target.Target.CGContext.SetStrokeColor(simpleColor.R / 256.0f, simpleColor.G / 256.0f, simpleColor.B / 256.0f,
 				simpleColor.A / 256.0f);
-			target.Target.CGContext.SetLineDash(0, new float[0]);
+			target.Target.CGContext.SetLineDash(0, new nfloat[0]);
 			if (dashes != null && dashes.Length > 1)
 			{
-				float[] intervals = new float[dashes.Length];
+				nfloat[] intervals = new nfloat[dashes.Length];
 				for (int idx = 0; idx < dashes.Length; idx++)
 				{
 					intervals[idx] = dashes[idx];
@@ -267,10 +267,10 @@ namespace OsmSharp.iOS.UI
 
 			// construct path.
 			target.Target.CGContext.BeginPath();
-			PointF[] points = new PointF[x.Length];
+			CGPoint[] points = new CGPoint[x.Length];
 			for (int idx = 0; idx < x.Length; idx++)
 			{
-				points[idx] = new PointF((float)transformed[idx][0], (float)transformed[idx][1]);
+				points[idx] = new CGPoint((float)transformed[idx][0], (float)transformed[idx][1]);
 			}
 			target.Target.CGContext.AddLines(points);
 			target.Target.CGContext.DrawPath(CGPathDrawingMode.Stroke);
@@ -288,7 +288,7 @@ namespace OsmSharp.iOS.UI
 		protected override void DrawPolygon(Target2DWrapper<CGContextWrapper> target, double[] x, double[] y, int color, double width, 
 		                                     bool fill)
 		{
-			float widthInPixels = this.ToPixels(width) * _scaleFactor;
+			nfloat widthInPixels = this.ToPixels(width) * _scaleFactor;
 
 			SimpleColor simpleColor = SimpleColor.FromArgb(color);
 			target.Target.CGContext.SetLineWidth(widthInPixels);
@@ -302,10 +302,10 @@ namespace OsmSharp.iOS.UI
 
 			// build the path.
 			target.Target.CGContext.BeginPath();
-			PointF[] points = new PointF[x.Length];
+			CGPoint[] points = new CGPoint[x.Length];
 			for (int idx = 0; idx < x.Length; idx++)
 			{
-				points[idx] = new PointF((float)transformed[idx][0], (float)transformed[idx][1]);
+				points[idx] = new CGPoint((float)transformed[idx][0], (float)transformed[idx][1]);
 			}
 
 			target.Target.CGContext.AddLines(points);
@@ -436,7 +436,7 @@ namespace OsmSharp.iOS.UI
 			double[] transformed = this.Transform(x, y);
 			float xPixels = (float)transformed[0];
 			float yPixels = (float)transformed[1];
-			float textSize = this.ToPixels(size) * _scaleFactor;
+			nfloat textSize = this.ToPixels(size) * _scaleFactor;
 
 			// get the glyhps/paths from the font.
 			CTFont font = this.GetFont(fontName, textSize);
@@ -456,9 +456,9 @@ namespace OsmSharp.iOS.UI
 			foreach (CTRun run in runs)
 			{
 				ushort[] glyphs = run.GetGlyphs();
-				PointF[] positions = run.GetPositions();
+				CGPoint[] positions = run.GetPositions();
 
-				float previousOffset = 0;
+				nfloat previousOffset = 0;
 				for (int idx = 0; idx < glyphs.Length; idx++)
 				{
 					CGPath path = font.GetPathForGlyph(glyphs[idx]);
@@ -505,7 +505,7 @@ namespace OsmSharp.iOS.UI
 		protected override void DrawLineText(Target2DWrapper<CGContextWrapper> target, double[] xa, double[] ya, string text, int color, 
 		                                      double size, int? haloColor, int? haloRadius, string fontName)
 		{
-			float textSize = this.ToPixels(size) * _scaleFactor;
+			nfloat textSize = this.ToPixels(size) * _scaleFactor;
 			
 			// transform first.
 			double[] xTransformed = new double[xa.Length];
@@ -534,7 +534,7 @@ namespace OsmSharp.iOS.UI
 			};
 			NSAttributedString attributedString = new NSAttributedString(text, stringAttributes);
 			CTLine line = new CTLine(attributedString);
-			RectangleF textBounds = line.GetBounds(CTLineBoundsOptions.UseOpticalBounds);
+			CGRect textBounds = line.GetBounds(CTLineBoundsOptions.UseOpticalBounds);
 			CTRun[] runs = line.GetGlyphRuns();
 			var lineLength = Polyline2D.Length(xTransformed, yTransformed);
 
@@ -545,9 +545,9 @@ namespace OsmSharp.iOS.UI
 			foreach (CTRun run in runs)
 			{
 				ushort[] glyphs = run.GetGlyphs();
-				PointF[] positions = run.GetPositions();
-				float[] characterWidths = new float[glyphs.Length];
-				float previous = 0;
+				CGPoint[] positions = run.GetPositions();
+				nfloat[] characterWidths = new nfloat[glyphs.Length];
+				nfloat previous = 0;
 				float textLength = (float)positions[positions.Length - 1].X;
 				//float textLength = (float)this.FromPixels(_target, _view, positions [positions.Length - 1].X);
 				if (lineLength > textLength * 1.2f)
@@ -555,11 +555,11 @@ namespace OsmSharp.iOS.UI
 					for (int idx = 0; idx < characterWidths.Length - 1; idx++)
 					{
 						//characterWidths [idx] = (float)this.FromPixels(_target, _view, positions [idx + 1].X - previous);
-						characterWidths[idx] = (float)(positions[idx + 1].X - previous);
+						characterWidths[idx] = (positions[idx + 1].X - previous);
 						previous = positions[idx + 1].X;
 					}
 					characterWidths[characterWidths.Length - 1] = characterWidths[characterWidths.Length - 2];
-					float characterHeight = textBounds.Height;
+					nfloat characterHeight = textBounds.Height;
 
 					this.DrawLineTextSegment(target, xTransformed, yTransformed, glyphs, color, haloColor, haloRadius,
 						lineLength / 2f, characterWidths, textLength, characterHeight, font);
@@ -570,8 +570,8 @@ namespace OsmSharp.iOS.UI
 		}
 
 		private void DrawLineTextSegment(Target2DWrapper<CGContextWrapper> target, double[] xTransformed, double[] yTransformed, ushort[] glyphs, int color, 
-		                                 int? haloColor, int? haloRadius, double middlePosition, float[] characterWidths,
-		                                 double textLength, float charachterHeight, CTFont font)
+		                                 int? haloColor, int? haloRadius, double middlePosition, nfloat[] characterWidths,
+		                                 double textLength, nfloat charachterHeight, CTFont font)
 		{
 
 			// see if text is 'upside down'

@@ -17,7 +17,7 @@
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using OsmSharp.iOS.UI;
 using OsmSharp.Math.Geo;
 using OsmSharp.Math.Geo.Projections;
@@ -96,7 +96,7 @@ namespace OsmSharp.iOS.UI
         /// Initializes a new instance of the <see cref="SomeTestProject.MapMarker"/> class.
         /// </summary>
         /// <param name="point">Point.</param>
-        public MapMarker (System.Drawing.PointF point)
+        public MapMarker (CoreGraphics.CGPoint point)
             : this(point, MapControlAlignmentType.CenterBottom, MapMarker.GetDefaultImage())
         {
 
@@ -107,7 +107,7 @@ namespace OsmSharp.iOS.UI
         /// </summary>
         /// <param name="point">Point.</param>
         /// <param name="marker">Alignment.</param>
-        public MapMarker (System.Drawing.PointF point, MapControlAlignmentType alignment)
+        public MapMarker (CoreGraphics.CGPoint point, MapControlAlignmentType alignment)
             : this(point, alignment, MapMarker.GetDefaultImage())
         {
 
@@ -119,7 +119,7 @@ namespace OsmSharp.iOS.UI
         /// <param name="point">Point.</param>
         /// <param name="image">Bitmap.</param>
         /// <param name="alignment">Alignment.</param>
-        public MapMarker(System.Drawing.PointF point, MapControlAlignmentType alignment, UIImage image)
+        public MapMarker(CoreGraphics.CGPoint point, MapControlAlignmentType alignment, UIImage image)
             : base(new UIButton(UIButtonType.Custom), point, alignment, (int)image.Size.Width, (int)image.Size.Height) {
             _image = image;
 
@@ -177,7 +177,7 @@ namespace OsmSharp.iOS.UI
             _popupXOffset = xOffset;
             _popupYOffset = yOffset;
             _popupView = view;
-            _popupView.Frame = new System.Drawing.RectangleF (new System.Drawing.PointF (0, 0), new System.Drawing.SizeF(width, height));
+            _popupView.Frame = new CoreGraphics.CGRect (new CoreGraphics.CGPoint (0, 0), new CoreGraphics.CGSize(width, height));
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace OsmSharp.iOS.UI
                 leftMargin = leftMargin + _popupXOffset;
                 topMargin = topMargin + _popupYOffset;
 
-                _popupView.Center = new System.Drawing.PointF ((float)leftMargin, (float)topMargin);
+                _popupView.Center = new CoreGraphics.CGPoint ((float)leftMargin, (float)topMargin);
 
                 return true;
             }

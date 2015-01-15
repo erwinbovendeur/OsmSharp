@@ -18,11 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using CoreGraphics;
 using System.Threading;
-using MonoTouch.CoreGraphics;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 using OsmSharp.Logging;
 using OsmSharp.Math.Geo;
 using OsmSharp.Math.Geo.Projections;
@@ -107,7 +107,7 @@ namespace OsmSharp.iOS.UI
 		/// Initializes a new instance of the <see cref="OsmSharp.iOS.UI.MapView"/> class.
 		/// </summary>
 		/// <param name="frame">Frame.</param>
-		public MapView(RectangleF frame) : base(frame)
+		public MapView(CGRect frame) : base(frame)
 		{
 			this.Initialize(new GeoCoordinate(0, 0), new Map(), 0, 16);
 		}
@@ -292,7 +292,7 @@ namespace OsmSharp.iOS.UI
         /// Gets or sets the frame.
         /// </summary>
         /// <value>The frame.</value>
-        public override RectangleF Frame
+        public override CGRect Frame
         {
             get
             {
@@ -328,7 +328,7 @@ namespace OsmSharp.iOS.UI
 		/// <summary>
 		/// The 
 		/// </summary>
-		private RectangleF _rect;
+		private CGRect _rect;
 		/// <summary>
 		/// Holds the on screen buffered image.
 		/// </summary>
@@ -370,7 +370,7 @@ namespace OsmSharp.iOS.UI
 				try
 				{
 					// create the view that would be use for rendering.
-					float size = System.Math.Max(_rect.Width, _rect.Height);
+					float size = System.Math.Max((float)_rect.Width, (float)_rect.Height);
 					View2D view = _cacheRenderer.Create((int)(size * _extra), (int)(size * _extra),
 						              this.Map, (float)this.Map.Projection.ToZoomFactor(this.MapZoom), 
 						              this.MapCenter, _invertX, _invertY, this.MapTilt);
@@ -424,12 +424,12 @@ namespace OsmSharp.iOS.UI
 		/// <summary>
 		/// Holds the scale factor.
 		/// </summary>
-		private float _scaleFactor = 1;
+		private nfloat _scaleFactor = 1;
 
 		/// <summary>
 		/// Holds the extra border.
 		/// </summary>
-		private float _extra = 1.5f;
+		private nfloat _extra = 1.5f;
 
 		/// <summary>
 		/// Holds the previous rendered zoom.
@@ -448,10 +448,10 @@ namespace OsmSharp.iOS.UI
 					try
 					{
 							// use object
-						RectangleF rect = _rect;
+						CGRect rect = _rect;
 
 						// create the view.
-						float size = System.Math.Max(_rect.Width, _rect.Height);
+						float size = System.Math.Max((float) _rect.Width, (float)_rect.Height);
 						var view = _cacheRenderer.Create((int)(size * _extra), (int)(size * _extra),
 							              this.Map, (float)this.Map.Projection.ToZoomFactor(this.MapZoom),
                                           this.MapCenter, _invertX, _invertY, this.MapTilt);
@@ -488,12 +488,12 @@ namespace OsmSharp.iOS.UI
 						// add the internal layer.
 						try
 						{
-							image.SetRGBFillColor(1, 1, 1, 1);
-							image.FillRect(new RectangleF(
+							image.SetFillColor(1, 1, 1, 1);
+							image.FillRect(new CGRect(
 								0, 0, imageWidth, imageHeight));
 
                             // notify the map that the view has changed.
-                            var normalView = _cacheRenderer.Create(_rect.Width, _rect.Height,
+							var normalView = _cacheRenderer.Create((float)_rect.Width, (float)_rect.Height,
                                               this.Map, (float)this.Map.Projection.ToZoomFactor(this.MapZoom),
                                               this.MapCenter, _invertX, _invertY, this.MapTilt);
 							this.Map.ViewChanged((float)this.Map.Projection.ToZoomFactor(this.MapZoom), this.MapCenter,
@@ -508,7 +508,7 @@ namespace OsmSharp.iOS.UI
 
 							// does the rendering.
 							bool complete = _cacheRenderer.Render(new CGContextWrapper(image,
-								new RectangleF(0, 0, (int)(size * _extra), (int)(size * _extra))),
+								new CGRect(0, 0, (int)(size * _extra), (int)(size * _extra))),
                                                 _map.Projection, layers, view, sceneZoomFactor);
 
 							long afterRendering = DateTime.Now.Ticks;
@@ -578,7 +578,7 @@ namespace OsmSharp.iOS.UI
 		/// <param name="rotation">Rotation.</param>
 		private void Rotate(UIRotationGestureRecognizer rotation)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			if (this.MapAllowTilt &&
                 rect.Width > 0 && this.Map != null)
 			{
@@ -601,7 +601,7 @@ namespace OsmSharp.iOS.UI
 				else
 				{
 					//_mapViewBefore = this.CreateView (_rect);
-					View2D rotatedView = _mapViewBefore.RotateAroundCenter((Radian)rotation.Rotation);
+					View2D rotatedView = _mapViewBefore.RotateAroundCenter((Radian)(float)rotation.Rotation);
 					_mapTilt = (float)((Degree)rotatedView.Rectangle.Angle).Value;
 					PointF2D sceneCenter = rotatedView.Rectangle.Center;
 					this.MapCenter = this.Map.Projection.ToGeoCoordinates(
@@ -626,7 +626,7 @@ namespace OsmSharp.iOS.UI
 		/// <param name="pinch">Pinch.</param>
 		private void Pinch(UIPinchGestureRecognizer pinch)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			if (this.MapAllowZoom &&
 			    rect.Width > 0)
 			{
@@ -665,19 +665,19 @@ namespace OsmSharp.iOS.UI
 		/// <summary>
 		/// Holds the previous pan offset.
 		/// </summary>
-        private PointF _prevOffset;
+        private CGPoint _prevOffset;
 		/// <summary>
 		/// Pan the specified some.
 		/// </summary>
 		/// <param name="some">Some.</param>
 		private void Pan(UIPanGestureRecognizer pan)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			if (this.MapAllowPan &&
                 rect.Width > 0 && this.Map != null)
 			{
 				this.StopCurrentAnimation();
-				PointF offset = pan.TranslationInView(this);
+				CGPoint offset = pan.TranslationInView(this);
 				if (pan.State == UIGestureRecognizerState.Ended)
 				{
 					this.NotifyMovementByInvoke();
@@ -688,7 +688,7 @@ namespace OsmSharp.iOS.UI
 				}
 				else if (pan.State == UIGestureRecognizerState.Began)
 				{
-                    _prevOffset = new PointF(0, 0);
+                    _prevOffset = new CGPoint(0, 0);
                     this.RaiseMapTouchedDown();
 				}
 				else if (pan.State == UIGestureRecognizerState.Changed)
@@ -726,7 +726,7 @@ namespace OsmSharp.iOS.UI
 		/// <param name="tap">Tap.</param>
 		private void SingleTap(UITapGestureRecognizer tap)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
             if (rect.Width > 0 && rect.Height > 0 && this.Map != null)
 			{
 				this.StopCurrentAnimation();
@@ -734,7 +734,7 @@ namespace OsmSharp.iOS.UI
 				if (this.MapTapEvent != null)
 				{
 					View2D view = this.CreateView(rect);
-					PointF location = tap.LocationInView(this);
+					CGPoint location = tap.LocationInView(this);
 					double[] sceneCoordinates = view.FromViewPort(rect.Width, rect.Height, location.X, location.Y);
 					this.MapTapEvent(this.Map.Projection.ToGeoCoordinates(sceneCoordinates[0], sceneCoordinates[1]));
 				}
@@ -760,14 +760,14 @@ namespace OsmSharp.iOS.UI
 		/// <param name="tap">Tap.</param>
 		private void DoubleTap(UITapGestureRecognizer tap)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			if (this.MapAllowZoom &&
                 rect.Width > 0 && rect.Height > 0 && this.Map != null)
 			{
 				this.StopCurrentAnimation();
 				
 				View2D view = this.CreateView(rect);
-				PointF location = tap.LocationInView(this);
+				CGPoint location = tap.LocationInView(this);
 				double[] sceneCoordinates = view.FromViewPort(rect.Width, rect.Height, location.X, location.Y);
 				GeoCoordinate geoLocation = this.Map.Projection.ToGeoCoordinates(sceneCoordinates[0], sceneCoordinates[1]);
 
@@ -809,7 +809,7 @@ namespace OsmSharp.iOS.UI
 			_triggeredNotifyMovement = false;
 
 			// change the map markers.
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
             if (rect.Width > 0 && rect.Height > 0 && this.Map != null)
 			{
 				// create the current view.
@@ -1159,7 +1159,7 @@ namespace OsmSharp.iOS.UI
 		/// Creates the view.
 		/// </summary>
 		/// <returns>The view.</returns>
-		public View2D CreateView(System.Drawing.RectangleF rect)
+		public View2D CreateView(CGRect rect)
 		{
             if (this.Map != null)
             {
@@ -1184,7 +1184,7 @@ namespace OsmSharp.iOS.UI
 		private void InvalidateMap()
 		{
 			// change the map markers.
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
             if (rect.Width > 0 && rect.Height > 0 && this.Map != null)
 			{
 				View2D view = this.CreateView(rect);
@@ -1217,7 +1217,7 @@ namespace OsmSharp.iOS.UI
 		/// Draws the view within the specified rectangle.
 		/// </summary>
 		/// <param name="rect">Rect.</param>
-		public override void Draw(System.Drawing.RectangleF rect)
+		public override void Draw(CGRect rect)
 		{
 			_rect = rect;
 			base.Draw(rect);
@@ -1272,7 +1272,7 @@ namespace OsmSharp.iOS.UI
 			_controls.Add(control); // add to controls list.
 			this.Add(control.BaseView); // add to this view.
 
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			if (rect.Width > 0 && rect.Height > 0)
 			{
                 View2D view = this.CreateView(rect);
@@ -1354,9 +1354,9 @@ namespace OsmSharp.iOS.UI
 		/// <param name="control"></param>
 		public void ZoomToControls(List<MapControl> controls, double percentage)
 		{
-			float width = this.Frame.Width;
-			float height = this.Frame.Height;
-			RectangleF rect = this.Frame;
+			nfloat width = this.Frame.Width;
+			nfloat height = this.Frame.Height;
+			CGRect rect = this.Frame;
 			if (width > 0)
 			{
 				PointF2D[] points = new PointF2D[controls.Count];
@@ -1419,7 +1419,7 @@ namespace OsmSharp.iOS.UI
             _markers.Add(marker); // add to markers list.
             this.Add(marker.View); // add to this view.
 
-            RectangleF rect = this.Frame;
+            CGRect rect = this.Frame;
             if (rect.Width > 0 && rect.Height > 0)
             {
                 View2D view = this.CreateView(rect);
@@ -1519,9 +1519,9 @@ namespace OsmSharp.iOS.UI
         /// <param name="marker"></param>
         public void ZoomToMarkers(List<MapMarker> markers, double percentage)
         {
-            float width = this.Frame.Width;
-            float height = this.Frame.Height;
-            RectangleF rect = this.Frame;
+            nfloat width = this.Frame.Width;
+            nfloat height = this.Frame.Height;
+            CGRect rect = this.Frame;
             if (width > 0)
             {
                 PointF2D[] points = new PointF2D[markers.Count];
@@ -1629,7 +1629,7 @@ namespace OsmSharp.iOS.UI
 		/// <param name="mapMarker"></param>
         public void NotifyControlChange(MapControl control)
 		{
-			RectangleF rect = this.Frame;
+			CGRect rect = this.Frame;
 			// notify map layout of changes.
 			if (rect.Width > 0 && rect.Height > 0)
 			{
